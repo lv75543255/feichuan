@@ -19,8 +19,8 @@ MainForm::MainForm(QWidget *parent) :
       ,m_setting(0)
 {
         Ui::MainForm * ui = this->ui;
-    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("gb18030"));
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf8"));
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("gb18030"));
+//    QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf8"));
 
     ui->setupUi(this);
     setWindowTitle("Qiuge");

@@ -51,19 +51,19 @@ void RSMessage::fill(int version, int packet, int action, const QString &content
         m_additional = additional;
 
         data.clear();
-        data.append(m_verion.toAscii());
+        data.append(m_verion.toLocal8Bit());
         data.append(':');
-        data.append(m_packet.toAscii());
+        data.append(m_packet.toLocal8Bit());
         data.append(':');
-        data.append(Global::localUserName.toAscii());
+        data.append(Global::localUserName.toLocal8Bit());
         data.append(':');
-        data.append(Global::localHostName.toAscii());
+        data.append(Global::localHostName.toLocal8Bit());
         data.append(':');
-        data.append(m_action.toAscii());
+        data.append(m_action.toLocal8Bit());
         data.append(':');
-        data.append(content.toAscii());
+        data.append(content.toLocal8Bit());
         data.append('\0');
-        data.append(additional.toAscii());
+        data.append(additional.toLocal8Bit());
         data.append('\0');
 }
 
@@ -89,7 +89,7 @@ bool RSMessage::parse()
 {
         bool ret = false;
         const QByteArray & data = m_data;
-        QString str = QString::fromAscii(data.data(),data.size());
+        QString str = QString::fromLocal8Bit(data.data(),data.size());
         QRegExp reg("(.*):(.*):(.*):(.*):(.*):");
         reg.setMinimal(true);
         reg.indexIn(str);

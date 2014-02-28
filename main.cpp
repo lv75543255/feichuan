@@ -1,4 +1,4 @@
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "mainform.h"
 #include "QStyle"
 int main(int argc, char *argv[])
