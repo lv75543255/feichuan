@@ -27,6 +27,9 @@ public slots:
 protected:
     void closeEvent(QCloseEvent *);
 private:
+    void sentBrocast(QUdpSocket *udp,const QByteArray & data,quint16 port);
+    bool isOtherAddress(const QHostAddress &address);
+
     void processMessage(const RSMessage &);
     Ui::MainForm *ui;
     QTreeWidgetItem * itemFriends;

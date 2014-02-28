@@ -9,10 +9,13 @@
 #include <QTimer>
 #include <QTextCodec>
 #include <QSettings>
+#include <QNetworkInterface>
+#include <QNetworkAddressEntry>
 #include "useritem.h"
 #include "feiproto.h"
 #include "global.h"
 #include "logindialog.h"
+//#define TEST_SELF //(开启自我聊天，可能用于测试)
 MainForm::MainForm(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MainForm)
@@ -51,7 +54,9 @@ MainForm::~MainForm()
 {
         if(Global::udpSocket != NULL)
         {
-                Global::udpSocket->writeDatagram(RSMessage::exit().data(),QHostAddress::Broadcast,2425);
+//                Global::udpSocket->writeDatagram(RSMessage::exit().data(),QHostAddress::Broadcast,2425);
+
+                sentBrocast(Global::udpSocket,RSMessage::exit().data(),2425);
         }
         delete ui;
 }
@@ -89,10 +94,15 @@ void MainForm::start()
 
 
     Global::udpSocket = new QUdpSocket(this);
+    Global::udpSocket->setSocketOption(QUdpSocket::MulticastLoopbackOption,0);
+
     if(Global::udpSocket->bind(2425/*,QUdpSocket::ShareAddress*/))
     {
         connect(Global::udpSocket,SIGNAL(readyRead()),this,SLOT(onReadyRead()));
-        Global::udpSocket->writeDatagram(RSMessage::entry().data(),QHostAddress::Broadcast,2425);
+//        Global::udpSocket->writeDatagram(RSMessage::entry().data(),QHostAddress::Broadcast,2425);
+
+        sentBrocast(Global::udpSocket,RSMessage::entry().data(),2425);
+
     }
     else
     {
@@ -131,9 +141,9 @@ void MainForm::onReadyRead()
         qDebug()<<sender<<":"<<datagram;
         if(message.parse())
         {
-                qDebug()<<"=========udp=========>";
+                qDebug()<<"\n=========udp=========>";
                 processMessage(message);
-                qDebug()<<"==================<";
+                qDebug()<<"=====================<\n";
         }
     }
 }
@@ -144,8 +154,12 @@ void MainForm::processMessage(const RSMessage & message)
     {
     case IPMSG_BR_ENTRY:
     {
-        Global::udpSocket->writeDatagram(RSMessage::ansEntry().data(),message.senderAdress(),message.senderPort());
+        if(isOtherAddress(message.senderAdress()))
+        {
+            Global::udpSocket->writeDatagram(RSMessage::ansEntry().data(),message.senderAdress(),message.senderPort());
+        }
     }
+        break;
     case IPMSG_ANSENTRY:
     {
            UserItem *item ;
@@ -159,10 +173,13 @@ void MainForm::processMessage(const RSMessage & message)
         break;
     case IPMSG_BR_EXIT:
     {
-        UserItem *item = list.take(message.senderAdress().toString());
-        if(item != NULL)
+        if(isOtherAddress(message.senderAdress()))
         {
-            delete item;
+            UserItem *item = list.take(message.senderAdress().toString());
+            if(item != NULL)
+            {
+                delete item;
+            }
         }
 
     }
@@ -221,7 +238,44 @@ void MainForm::onConnection()
 }
 void MainForm::closeEvent(QCloseEvent * e)
 {
-        qApp->quit();
+    qApp->quit();
+}
+
+void MainForm::sentBrocast(QUdpSocket *udp, const QByteArray &data, quint16 port)
+{
+   const QList<QNetworkInterface> & networkInterfaces = QNetworkInterface::allInterfaces();
+   foreach (const QNetworkInterface & interface, networkInterfaces) {
+       const QList<QNetworkAddressEntry> & addressEntrys = interface.addressEntries();
+       foreach (const QNetworkAddressEntry & entry, addressEntrys) {
+           const QHostAddress & ip = entry.ip();
+           qDebug()<<"brocast to:"<<entry.ip()<<"("<<entry.netmask()<<","<<entry.broadcast()<<")";
+           if(!ip.isLoopback() && ip.protocol() == QAbstractSocket::IPv4Protocol)
+           {
+                 udp->writeDatagram(data,entry.broadcast(),port);
+           }
+       }
+
+   }
+
+}
+
+bool MainForm::isOtherAddress(const QHostAddress &address)
+{
+#ifndef TEST_SELF
+    const QList<QNetworkInterface> & networkInterfaces = QNetworkInterface::allInterfaces();
+    foreach (const QNetworkInterface & interface, networkInterfaces) {
+        const QList<QNetworkAddressEntry> & addressEntrys = interface.addressEntries();
+        foreach (const QNetworkAddressEntry & entry, addressEntrys) {
+            qDebug()<<"compare address:"<<entry.ip()<<":"<<address;
+            if(entry.ip() == address)
+            {
+                return false;
+            }
+        }
+
+    }
+#endif
+    return true;
 }
 
 
