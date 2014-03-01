@@ -14,14 +14,10 @@ QVariant RSFileModel::headerData(int section, Qt::Orientation orientation,
         case 0:
             return tr("Name");
         case 1:
-            return tr("Class");
-        case 2:
             return tr("Size");
-        case 3:
+        case 2:
             return tr("Time");
-        case 4:
-            return tr("Stutas");
-        case 5:
+        case 3:
             return tr("Path");
         default:
             return QVariant();
@@ -67,14 +63,10 @@ QVariant RSFileModel::data(const QModelIndex &index, int role) const
     case 0:
         return item->filename();
     case 1:
-        return tr("Reguler File");
-    case 2:
         return item->filesize();
-    case 3:
+    case 2:
         return item->modifyTime();
-    case 4:
-        return -1;
-    case 5:
+    case 3:
         return item->fullname();
     default:
         return QVariant();
@@ -93,6 +85,6 @@ int RSFileModel::rowCount(const QModelIndex &parent ) const
 }
 int RSFileModel::columnCount(const QModelIndex &parent ) const
 {
-    return 6;
+    return 4;
 }
 

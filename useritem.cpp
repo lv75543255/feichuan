@@ -57,7 +57,6 @@ void UserItem::showChat()
     {
         m_chat = new ChatForm(this);
     }
-    setText(0,m_nickName);
     m_chat->showMessage();
 }
 

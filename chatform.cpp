@@ -37,9 +37,9 @@ ChatForm::ChatForm(UserItem *item, QWidget *parent) :
         ui->sendView->setModel(sendModel);
 
         ui->recvView->setColumnWidth(0,70);
-        ui->recvView->setColumnWidth(1,180);
+        ui->recvView->setColumnWidth(1,30);
         ui->sendView->setColumnWidth(0,70);
-        ui->sendView->setColumnWidth(1,180);
+        ui->sendView->setColumnWidth(1,30);
 
         connect(ui->sendMsgButton,SIGNAL(clicked()),this,SLOT(sendMessage()));
         connect(ui->reciveButton,SIGNAL(clicked()),this,SLOT(onRecvClicked()));

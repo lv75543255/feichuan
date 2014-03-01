@@ -52,4 +52,5 @@ private:
         QTcpSocket *m_tcp;
 };
 
+
 #endif // MSGFILE_H
