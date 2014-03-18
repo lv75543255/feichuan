@@ -1,11 +1,15 @@
 #include "platform.h"
 #include <cstdlib>
 
-char* OS::getHostName()
+namespace Platform {
+
+QString getHostName()
 {
     return getenv("HOSTNAME");
 }
-char* OS::getUserName()
+QString getUserName()
 {
     return getenv("USER");
+}
+
 }

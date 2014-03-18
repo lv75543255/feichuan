@@ -1,13 +1,12 @@
-#include <QApplication>
-#include "mainform.h"
-#include "QStyle"
+#include "qtquick2controlsapplicationviewer.h"
+
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    Application app(argc, argv);
 
-    a.setStyle("plastique");
+    QtQuick2ControlsApplicationViewer viewer;
+    viewer.setMainQmlFile(QStringLiteral("qml/main.qml"));
+    viewer.show();
 
-    MainForm w;
-
-    return a.exec();
+    return app.exec();
 }

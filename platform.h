@@ -1,11 +1,9 @@
 #ifndef OS_H
 #define OS_H
-
-class OS
-{
-public:
-    static char* getHostName();
-    static char* getUserName();
-};
+#include <QString>
+namespace Platform {
+QString getHostName();
+QString getUserName();
+}
 
 #endif // OS_H
