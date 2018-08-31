@@ -4,8 +4,8 @@
 class OS
 {
 public:
-    static char* getHostName();
-    static char* getUserName();
+    static const char* getHostName();
+    static const char* getUserName();
 };
 
 #endif // OS_H
